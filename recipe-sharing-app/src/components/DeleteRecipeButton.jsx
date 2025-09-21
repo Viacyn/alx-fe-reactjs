@@ -1,5 +1,5 @@
 // src/components/DeleteRecipeButton.jsx
-import { useRecipeStore } from "./recipeStore";
+import { useRecipeStore } from "../store/recipeStore";
 import { useNavigate } from "react-router-dom";
 
 export default function DeleteRecipeButton({ recipeId }) {
