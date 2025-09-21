@@ -1,6 +1,6 @@
 // src/components/EditRecipeForm.jsx
 import { useState } from "react";
-import { useRecipeStore } from "../store/recipeStore";
+import { useRecipeStore } from "./recipeStore";
 
 export default function EditRecipeForm({ recipe, onClose }) {
   const updateRecipe = useRecipeStore((state) => state.updateRecipe);
