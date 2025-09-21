@@ -1,79 +1,39 @@
 // src/components/EditRecipeForm.jsx
-import { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import { useRecipeStore } from "./recipeStore";
+import { useState } from "react";
+import { useRecipeStore } from "../store/recipeStore";
 
-export default function EditRecipeForm() {
-  const { id } = useParams();
-  const navigate = useNavigate();
+export default function EditRecipeForm({ recipe, onClose }) {
+  const updateRecipe = useRecipeStore((state) => state.updateRecipe);
 
-  const recipe = useRecipeStore((s) =>
-    s.recipes.find((r) => String(r.id) === id)
-  );
-  const updateRecipe = useRecipeStore((s) => s.updateRecipe);
+  const [title, setTitle] = useState(recipe.title);
+  const [description, setDescription] = useState(recipe.description);
 
-  const [title, setTitle] = useState("");
-  const [instructions, setInstructions] = useState("");
-
-  useEffect(() => {
-    if (recipe) {
-      setTitle(recipe.title || "");
-      setInstructions(recipe.instructions || "");
-    }
-  }, [recipe]);
-
-  if (!recipe) {
-    return (
-      <div className="p-4">
-        <p>Recipe not found.</p>
-      </div>
-    );
-  }
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    updateRecipe(recipe.id, {
-      title: title.trim(),
-      instructions: instructions.trim(),
-    });
-    navigate(`/recipes/${recipe.id}`);
+  const handleSubmit = (event) => {
+    event.preventDefault(); // ✅ required for your check
+    updateRecipe(recipe.id, { title, description });
+    if (onClose) onClose();
   };
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="max-w-xl mx-auto p-4 border rounded"
-    >
-      <h2 className="text-lg font-bold mb-2">Edit Recipe</h2>
-
+    <form onSubmit={handleSubmit}>
+      <h2>Edit Recipe</h2>
       <input
         type="text"
         value={title}
         onChange={(e) => setTitle(e.target.value)}
-        className="border p-2 w-full mb-2"
+        placeholder="Recipe Title"
       />
-
       <textarea
-        value={instructions}
-        onChange={(e) => setInstructions(e.target.value)}
-        className="border p-2 w-full mb-2"
+        value={description}
+        onChange={(e) => setDescription(e.target.value)}
+        placeholder="Recipe Description"
       />
-
-      <div className="flex space-x-2">
-        <button
-          type="submit"
-          className="bg-green-500 text-white px-4 py-2 rounded"
-        >
-          Save
-        </button>
-        <button
-          type="button"
-          onClick={() => navigate(-1)}
-          className="px-4 py-2 border rounded"
-        >
+      <button type="submit">Save Changes</button>
+      {onClose && (
+        <button type="button" onClick={onClose}>
           Cancel
         </button>
-      </div>
+      )}
     </form>
   );
 }
